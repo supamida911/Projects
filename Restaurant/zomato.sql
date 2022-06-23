@@ -60,3 +60,18 @@ with tmp as
 from zomato)
 select *
 from tmp;
+
+# 온라인 주문 가능 여부에 따른 평점
+-- 온라인 주문이 가능한 식당의 개수
+select `has online delivery`,
+	count(`restaurant name`) as restaurant_cnt
+from zomato
+group by 1;
+-- 가능 여부에 따른 평점
+select `has online delivery` as 'Online_Delivery',
+	avg(`aggregate rating`) as 'rating'
+from zomato
+group by 1;
+
+select *
+from zomato;
