@@ -37,15 +37,26 @@ select `restaurant name`,
     dense_rank() over(order by `aggregate rating` desc) as rating_rnk
 from zomato;
 
-# 매장별 가격
-select `restaurant name`,
+# 매장별 평점, 2인 평균 가격
+-- 통화 통일
+with tmp as
+(select `restaurant name`,
 	city,
-    `average cost for two`,
-    row_number() over(order by `average cost for two` desc) as cost_rnk
-from zomato;
-
-# 업종별 평균 평점, 가격
-select cuisines,
-	avg(`average cost for two`) as avg_cost
-from zomato
-group by 1;
+    cuisines,
+    `aggregate rating`,
+    case when currency like 'Botswana%' then `average cost for two`* 0.082
+		when currency like 'Brazilian%' then `average cost for two`* 0.19
+        when currency like 'Emirati%' then `average cost for two`* 0.27
+        when currency like 'Indian%' then `average cost for two`* 0.013
+        when currency like 'Indonesian%' then `average cost for two`* 0.000067
+        when currency like 'NewZealand%' then `average cost for two`* 0.63
+        when currency like 'Pounds%' then `average cost for two`* 1.23
+        when currency like 'Qatari%' then `average cost for two`* 0.27
+        when currency like 'Rand%' then `average cost for two`* 0.063
+        when currency like 'Sri%' then `average cost for two`* 0.0028
+        when currency like 'Turkish%' then `average cost for two`* 0.058
+        else `average cost for two`
+        end as 'cost'
+from zomato)
+select *
+from tmp;
